@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ILoveInterviews — AI Interview</title>
+  <title>TechScreen — AI Interview</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
@@ -16,7 +16,7 @@
     <div class="header-inner">
       <div class="logo">
         <span class="logo-bracket">[</span>
-        <span class="logo-text">ILoveInterviews</span>
+        <span class="logo-text">TechScreen</span>
         <span class="logo-bracket">]</span>
       </div>
       <div class="header-meta">
@@ -30,26 +30,53 @@
   <!-- MAIN -->
   <main class="main">
 
-    <!-- STAGE: INTRO -->
+    <!-- STAGE: INTRO / RESUME UPLOAD -->
     <div class="stage" id="stageIntro">
       <div class="intro-card">
         <div class="intro-icon">⬡</div>
         <h1 class="intro-title">Technical Interview<br/><em>Simulator</em></h1>
         <p class="intro-desc">
-          You'll be asked a technical question. Read it carefully, then answer verbally when the mic activates.
-          A follow-up question will be generated based on your response.
-          At the end, you'll receive a score out of 100.
+          Upload your résumé and we'll generate a personalised technical question based on your experience.
+          Answer verbally, face a follow-up, then get scored out of 100.
         </p>
+
         <div class="intro-flow">
-          <div class="flow-step"><span class="flow-num">01</span><span>Read question</span></div>
+          <div class="flow-step"><span class="flow-num">01</span><span>Upload résumé</span></div>
           <div class="flow-arrow">→</div>
-          <div class="flow-step"><span class="flow-num">02</span><span>Answer verbally</span></div>
+          <div class="flow-step"><span class="flow-num">02</span><span>Read question</span></div>
           <div class="flow-arrow">→</div>
-          <div class="flow-step"><span class="flow-num">03</span><span>Follow-up</span></div>
+          <div class="flow-step"><span class="flow-num">03</span><span>Answer verbally</span></div>
           <div class="flow-arrow">→</div>
-          <div class="flow-step"><span class="flow-num">04</span><span>Get scored</span></div>
+          <div class="flow-step"><span class="flow-num">04</span><span>Follow-up</span></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><span class="flow-num">05</span><span>Get scored</span></div>
         </div>
-        <button class="btn-start" id="btnStart">Begin Interview →</button>
+
+        <!-- Resume upload zone -->
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" id="resumeInput" accept=".pdf,.doc,.docx,.txt" hidden/>
+          <div class="upload-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <p class="upload-primary" id="uploadPrimary">Drop your résumé here</p>
+          <p class="upload-secondary">or <span class="upload-browse" id="uploadBrowse">browse files</span></p>
+          <p class="upload-formats">PDF · DOC · DOCX · TXT</p>
+          <!-- Selected file chip -->
+          <div class="upload-chip hidden" id="uploadChip">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+            <span id="uploadChipName"></span>
+            <button class="upload-chip-remove" id="uploadChipRemove">✕</button>
+          </div>
+        </div>
+
+        <button class="btn-start" id="btnStart" disabled>Upload résumé to begin</button>
       </div>
     </div>
 

@@ -143,7 +143,95 @@ body {
   justify-content: center;
   gap: 0.75rem;
   flex-wrap: wrap;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+/* ===== RESUME UPLOAD ZONE ===== */
+.upload-zone {
+  border: 1.5px dashed var(--border-bright);
+  border-radius: 10px;
+  padding: 2rem 1.5rem;
+  margin-bottom: 1.75rem;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+.upload-zone:hover,
+.upload-zone.drag-over {
+  border-color: var(--green);
+  background: var(--green-dim);
+}
+.upload-zone.has-file {
+  border-color: var(--green);
+  border-style: solid;
+  background: var(--green-dim);
+}
+.upload-icon {
+  color: var(--text-dim);
+  margin-bottom: 0.25rem;
+  transition: color var(--transition);
+}
+.upload-zone:hover .upload-icon,
+.upload-zone.has-file .upload-icon { color: var(--green); }
+
+.upload-primary {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.upload-secondary {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+.upload-browse {
+  color: var(--green);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.upload-formats {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+  margin-top: 0.25rem;
+}
+.upload-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(0,255,135,0.1);
+  border: 1px solid rgba(0,255,135,0.3);
+  border-radius: 6px;
+  padding: 0.35rem 0.75rem;
+  margin-top: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--green);
+}
+.upload-chip-remove {
+  background: none;
+  border: none;
+  color: var(--green);
+  cursor: pointer;
+  font-size: 0.7rem;
+  padding: 0;
+  line-height: 1;
+  opacity: 0.6;
+  transition: opacity var(--transition);
+}
+.upload-chip-remove:hover { opacity: 1; }
+
+/* Disabled start button state */
+.btn-start:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
 }
 .flow-step {
   display: flex;

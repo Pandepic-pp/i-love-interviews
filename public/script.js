@@ -73,19 +73,91 @@ const btnStopRecording = $('btnStopRecording');
 const TIMER_CIRCUMFERENCE = 314;
 // Ring circumference for score (r=85): 2*π*85 ≈ 534
 const SCORE_CIRCUMFERENCE = 534;
-const READ_TIME = 30; // seconds
+const READ_TIME = 20; // seconds
 
-// ── Tech question bank ─────────────────────────────────
-const QUESTIONS = [
-  "Explain the difference between synchronous and asynchronous JavaScript. When would you prefer one over the other, and can you describe how the event loop plays a role in this?",
-  "What is the difference between SQL and NoSQL databases? Can you describe a real-world scenario where you would choose one over the other?",
-  "Explain how HTTP caching works. What are the key headers involved and how do they affect performance in a web application?",
-  "What is the CAP theorem in distributed systems? Can you explain each of the three properties and describe a trade-off you'd make in a real system?",
-  "Describe the concept of closure in JavaScript. Can you give a practical use case where closures solve a real problem?",
-];
+// ── Resume file state ──────────────────────────────────
+let selectedResumeFile = null;
 
-function pickQuestion() {
-  return QUESTIONS[Math.floor(Math.random() * QUESTIONS.length)];
+// ── DOM: upload elements ───────────────────────────────
+const uploadZone      = $('uploadZone');
+const resumeInput     = $('resumeInput');
+const uploadBrowse    = $('uploadBrowse');
+const uploadChip      = $('uploadChip');
+const uploadChipName  = $('uploadChipName');
+const uploadChipRemove = $('uploadChipRemove');
+const uploadPrimary   = $('uploadPrimary');
+
+// ── Resume upload interactions ─────────────────────────
+
+// Click anywhere on zone or "browse" link → open file picker
+uploadZone.addEventListener('click', (e) => {
+  if (e.target === uploadChipRemove) return; // handled separately
+  resumeInput.click();
+});
+
+resumeInput.addEventListener('change', () => {
+  if (resumeInput.files[0]) setResumeFile(resumeInput.files[0]);
+});
+
+// Drag and drop
+uploadZone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  uploadZone.classList.add('drag-over');
+});
+uploadZone.addEventListener('dragleave', () => {
+  uploadZone.classList.remove('drag-over');
+});
+uploadZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  uploadZone.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) setResumeFile(file);
+});
+
+// Remove file
+uploadChipRemove.addEventListener('click', (e) => {
+  e.stopPropagation();
+  clearResumeFile();
+});
+
+function setResumeFile(file) {
+  const allowed = ['application/pdf', 'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'text/plain'];
+  // also allow by extension if MIME is generic
+  const ext = file.name.split('.').pop().toLowerCase();
+  if (!allowed.includes(file.type) && !['pdf','doc','docx','txt'].includes(ext)) {
+    alert('Please upload a PDF, DOC, DOCX, or TXT file.');
+    return;
+  }
+  selectedResumeFile = file;
+  uploadChipName.textContent = file.name;
+  uploadChip.classList.remove('hidden');
+  uploadPrimary.textContent = 'Résumé selected';
+  uploadZone.classList.add('has-file');
+  btnStart.disabled = false;
+  btnStart.textContent = 'Begin Interview →';
+}
+
+function clearResumeFile() {
+  selectedResumeFile = null;
+  resumeInput.value = '';
+  uploadChip.classList.add('hidden');
+  uploadPrimary.textContent = 'Drop your résumé here';
+  uploadZone.classList.remove('has-file');
+  btnStart.disabled = true;
+  btnStart.textContent = 'Upload résumé to begin';
+}
+
+// ── Generate first question from resume via backend ────
+async function generateQuestionFromResume(file) {
+  const formData = new FormData();
+  formData.append('resume', file);
+
+  const res = await fetch('/generate-question', { method: 'POST', body: formData });
+  if (!res.ok) throw new Error('Question generation failed');
+  const data = await res.json();
+  return data.question;
 }
 
 // ── Status helpers ─────────────────────────────────────
@@ -490,15 +562,32 @@ function resetState() {
 }
 
 // ── Event listeners ────────────────────────────────────
-btnStart.addEventListener('click', () => {
-  resetState();
-  showStage(stageQuestion);
-  state.conversation.q1 = pickQuestion();
-  startReadingPhase(state.conversation.q1, 'Question 01');
+btnStart.addEventListener('click', async () => {
+  if (!selectedResumeFile || btnStart.disabled) return;
+
+  // Disable button while generating to prevent double-clicks
+  btnStart.disabled = true;
+  btnStart.textContent = 'Analysing résumé...';
+  setStatus('processing', 'Reading résumé...');
+
+  try {
+    const question = await generateQuestionFromResume(selectedResumeFile);
+    resetState();
+    showStage(stageQuestion);
+    state.conversation.q1 = question;
+    startReadingPhase(question, 'Question 01 — From Your Résumé');
+  } catch (err) {
+    console.error('Question generation error:', err);
+    btnStart.disabled = false;
+    btnStart.textContent = 'Begin Interview →';
+    setStatus('', 'Ready');
+    alert('Could not generate question from résumé. Please try again.');
+  }
 });
 
 btnRestart.addEventListener('click', () => {
   resetState();
+  clearResumeFile();
   showStage(stageIntro);
 });
 
