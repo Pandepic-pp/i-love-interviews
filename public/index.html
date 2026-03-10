@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ILoveInterviews — AI Interview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-bracket">[</span>
+        <span class="logo-text">ILoveInterviews</span>
+        <span class="logo-bracket">]</span>
+      </div>
+      <div class="header-meta">
+        <span class="meta-label">AI Mock Interview</span>
+        <span class="status-dot" id="statusDot"></span>
+        <span class="status-text" id="statusText">Ready</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- STAGE: INTRO -->
+    <div class="stage" id="stageIntro">
+      <div class="intro-card">
+        <div class="intro-icon">⬡</div>
+        <h1 class="intro-title">Technical Interview<br/><em>Simulator</em></h1>
+        <p class="intro-desc">
+          You'll be asked a technical question. Read it carefully, then answer verbally when the mic activates.
+          A follow-up question will be generated based on your response.
+          At the end, you'll receive a score out of 100.
+        </p>
+        <div class="intro-flow">
+          <div class="flow-step"><span class="flow-num">01</span><span>Read question</span></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><span class="flow-num">02</span><span>Answer verbally</span></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><span class="flow-num">03</span><span>Follow-up</span></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><span class="flow-num">04</span><span>Get scored</span></div>
+        </div>
+        <button class="btn-start" id="btnStart">Begin Interview →</button>
+      </div>
+    </div>
+
+    <!-- STAGE: QUESTION -->
+    <div class="stage hidden" id="stageQuestion">
+      <div class="interview-layout">
+
+        <!-- Left panel: Question -->
+        <div class="panel panel-question">
+          <div class="panel-label">
+            <span id="questionLabel">Question 01</span>
+            <span class="q-badge" id="qBadge">Reading</span>
+          </div>
+
+          <div class="question-box" id="questionBox">
+            <p class="question-text" id="questionText"></p>
+          </div>
+
+          <!-- Timer ring -->
+          <div class="timer-area" id="timerArea">
+            <div class="timer-ring-wrap">
+              <svg class="timer-ring" viewBox="0 0 120 120">
+                <circle class="ring-track" cx="60" cy="60" r="50"/>
+                <circle class="ring-progress" id="ringProgress" cx="60" cy="60" r="50"/>
+              </svg>
+              <div class="timer-inner">
+                <span class="timer-num" id="timerNum">20</span>
+                <span class="timer-unit">sec</span>
+              </div>
+            </div>
+            <p class="timer-label" id="timerLabel">Reading time remaining</p>
+          </div>
+        </div>
+
+        <!-- Right panel: Mic + Status -->
+        <div class="panel panel-mic">
+          <div class="mic-area">
+            <div class="mic-ring-outer" id="micRingOuter">
+              <div class="mic-ring-inner" id="micRingInner">
+                <div class="mic-icon" id="micIcon">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                    <line x1="12" y1="19" x2="12" y2="23"/>
+                    <line x1="8" y1="23" x2="16" y2="23"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+            <p class="mic-status" id="micStatus">Mic inactive</p>
+            <p class="mic-sub" id="micSub">Timer must reach 0 to activate</p>
+            <button class="btn-stop-recording hidden" id="btnStopRecording">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                <rect x="1" y="1" width="10" height="10" rx="2"/>
+              </svg>
+              Stop Recording
+            </button>
+          </div>
+
+          <!-- Waveform -->
+          <div class="waveform" id="waveform">
+            <div class="wave-bar" style="--i:0"></div>
+            <div class="wave-bar" style="--i:1"></div>
+            <div class="wave-bar" style="--i:2"></div>
+            <div class="wave-bar" style="--i:3"></div>
+            <div class="wave-bar" style="--i:4"></div>
+            <div class="wave-bar" style="--i:5"></div>
+            <div class="wave-bar" style="--i:6"></div>
+            <div class="wave-bar" style="--i:7"></div>
+            <div class="wave-bar" style="--i:8"></div>
+          </div>
+
+          <!-- Transcript preview -->
+          <div class="transcript-preview" id="transcriptPreview">
+            <div class="tp-label">Live transcript will appear here</div>
+            <p class="tp-text" id="tpText"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Processing overlay -->
+      <div class="processing-bar" id="processingBar">
+        <div class="pb-inner">
+          <div class="pb-spinner"></div>
+          <span id="processingMsg">Transcribing your answer...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAGE: SCORE -->
+    <div class="stage hidden" id="stageScore">
+      <div class="score-layout">
+        <div class="score-header">
+          <p class="score-eyebrow">Interview Complete</p>
+          <h2 class="score-title">Your Results</h2>
+        </div>
+
+        <!-- Score ring -->
+        <div class="score-ring-wrap">
+          <svg class="score-ring" viewBox="0 0 200 200">
+            <circle class="score-track" cx="100" cy="100" r="85"/>
+            <circle class="score-arc" id="scoreArc" cx="100" cy="100" r="85"/>
+          </svg>
+          <div class="score-center">
+            <span class="score-num" id="scoreNum">0</span>
+            <span class="score-denom">/100</span>
+          </div>
+        </div>
+
+        <!-- Breakdown -->
+        <div class="score-breakdown" id="scoreBreakdown"></div>
+
+        <!-- Transcript review -->
+        <div class="score-transcript" id="scoreTranscript"></div>
+
+        <button class="btn-restart" id="btnRestart">Start New Interview →</button>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
